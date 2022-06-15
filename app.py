@@ -9,7 +9,6 @@ from neo4j import GraphDatabase, basic_auth
 
 app = Flask(__name__, static_url_path = "/static/")
 
-# Try to load database connection info from environment
 url = os.getenv("NEO4J_URI", "bolt://localhost:7687")
 username = os.getenv("NEO4J_USER", "neo4j")
 password = os.getenv("NEO4J_PASSWORD", "1234")
@@ -37,7 +36,6 @@ def close_db(error):
 def home():
     return "casa"
 
-#crea un comprador
 @app.route("/comprador", methods=["POST"])
 def create():
     nombre=request.json['name']
@@ -47,7 +45,6 @@ def create():
 
     return  "Comprador creado con exito"
 
-#crea un producto
 @app.route("/producto", methods=["POST"])
 def createproducto():
     nombre=request.json['name']
@@ -57,7 +54,7 @@ def createproducto():
 
     return  "Producto creado con exito"
 
-#crea un vendedor
+
 @app.route("/vendedor", methods=["POST"])
 def createvendedor():
     nombre=request.json['name']
@@ -97,7 +94,7 @@ def recomienda():
 @app.route("/top", methods=['GET'])
 def Top5():
     db = get_db()
-    result = db.run("MATCH (c:Comprador)-[a:COMPRA]->(p:Producto)-[r:RECOMIENDA]->(p) RETURN b.nombre AS nombre, AVG(r.calificacion) AS promedio, count(c) as compras ORDER BY compras DESC, promedio DESC LIMIT 5")
+    result = db.run("MATCH (c:Comprador)-[a:COMPRA]->(p:Producto)-[r:RECOMIENDA]->(p) RETURN p.nombre AS nombre, AVG(r.calificacion) AS promedio, count(c) as compras ORDER BY compras DESC, promedio DESC LIMIT 5")
     return Response(dumps(result.data()),  mimetype='application/json')
 
 
